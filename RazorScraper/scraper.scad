@@ -16,7 +16,8 @@ module tetragon(p1, p2, p3, p4, h=1) {
 difference() {
 	// Same shape as the blade:
 	union() {
-		tetragon([-31/2,0],[31/2,0],[60/2,19],[-60/2,19], 3);
+		// tetragon([-31/2,0],[31/2,0],[60/2,19],[-60/2,19], 3);
+		tetragon([-33/2,0],[33/2,0],[62/2,19],[-62/2,19], 3);
 		// Blade connection piece
 		translate([0,-5,0])
 			tetragon([-31/2,0],[31/2,0],[38.5/2,10],[-38.5/2,10], 3);
@@ -26,7 +27,13 @@ difference() {
 				difference() {
 					// Rounded handle
 					minkowski() {
-						cube([29,60,0.5],center=true);
+						union() {
+							translate([0,15,0])
+								cube([29,45,0.5],center=true);
+							translate([0,-8,0])
+								scale([0.8,1,1])
+									cylinder(r=20,h=0.5,center=true);
+						}
 						sphere(r=2,$fn=12);
 					}
 					// Carve top
@@ -55,24 +62,31 @@ difference() {
 		// Make the blade angle downward toward the surface
 		rotate([-8,0,0]) {
 			cube([60,60,4],center=true);
-			// Also cut the blade holder in half
-			translate([0,-14.5+30+19/2,0])
-				cube([60,30,10],center=true);
+
+			// Make room for the blade to be inserted
+			translate([0,0,-1.5])
+				tetragon([-31/2,0],[31/2,0],[60/2,19],[-60/2,19], 2);
+
+				//%cube([60,20,0.5],center=true);
+
+			// Also cut the blade holder in half (so that half the blade protrudes)
+			translate([0,-14.5+27+19/2,0])
+				cube([62,30,10],center=true);
 			
 			// Right-hand hole
-			translate([3.5,2,0]) {
-				cylinder(r=1.85,h=15,center=true, $fn=16);
+			translate([3.45,2,0]) {
+				cylinder(r=1.85,h=15,center=true, $fn=32);
 				// With space for a nut on the back
-				translate([0,0,-4.5])
+				translate([0,0,-4.7])
 					rotate([0,0,30])
 						cylinder(r=3.5,h=3,center=true, $fn=6);
 			}
 
 			// Left-hand hole
-			translate([-3.5,2,0]) {
-				cylinder(r=1.85,h=15,center=true, $fn=16);
+			translate([-3.45,2,0]) {
+				cylinder(r=1.85,h=15,center=true, $fn=32);
 				// With space for a nut on the back
-				translate([0,0,-4.5])
+				translate([0,0,-4.7])
 					rotate([0,0,30])
 						cylinder(r=3.5,h=3,center=true, $fn=6);
 			}
