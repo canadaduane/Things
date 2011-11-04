@@ -1,5 +1,6 @@
 // Leg endings for the Eyler-Werve couch
 
+$fn=64;
 difference() {
 	difference() {
 		cylinder(r1=20,r2=23,h=15,center=true);
