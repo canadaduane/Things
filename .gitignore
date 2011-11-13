@@ -1,3 +1,4 @@
 *.gcode
+*.g
 *.*~
 .DS_Store

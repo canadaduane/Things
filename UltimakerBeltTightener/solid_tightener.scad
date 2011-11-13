@@ -51,7 +51,7 @@ module belt() {
 
 // belt();
 difference() {
-	cube([36,12,10],center=true);
-	translate([0,0,2])
-		rounded_elbow(90, 20, 2, 8);
+	cube([24,8,10],center=true);
+	translate([0,1.2,2])
+		rounded_elbow(45, 20, 2, 8);
 }
