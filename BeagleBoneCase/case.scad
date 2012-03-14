@@ -1,15 +1,18 @@
-wall_thickness=5.0;
+wall_thickness=6.5;
 base_thickness=2.0;
 bb_depth=20;
 bb_width=55.5;
 bb_height=88.5;
 bb_curve_corner=10;
 
-peg_pow_front=17.25;
+peg_pow_front=16.0;
 peg_pow_side=3.0;
 
 peg_sd_front=6.5;
 peg_sd_side=6.5;
+
+peg_outer_radius=2.8;
+peg_inner_radius=2.0;
 
 module RoundedBB(extra_width,extra_height,depth,curve=bb_curve_corner) {
 	minkowski() {
@@ -51,10 +54,10 @@ difference() {
 				// -- Top End --
 
 				// SD Card slot
-				translate([-6,bb_height/2,-5.5])
+				translate([-6,bb_height/2,-4])
 					cube([12,10,2], center=true);
 				// USB port
-				translate([10.5,bb_height/2,1.5])
+				translate([10.5,bb_height/2,3])
 					cube([15,10,8],center=true);
 			}
 		}
@@ -63,15 +66,15 @@ difference() {
 		translate([0,0,-bb_depth/2+9]) {
 			// Pegs on "power" end
 			translate([-bb_width/2+peg_pow_side,-bb_height/2+peg_pow_front,-5])
-				cylinder(r=2.5,h=4,$fn=32,center=true);
+				cylinder(r=peg_outer_radius,h=4,$fn=32,center=true);
 			translate([bb_width/2-peg_pow_side,-bb_height/2+peg_pow_front,-5])
-				cylinder(r=2.5,h=4,$fn=32,center=true);
+				cylinder(r=peg_outer_radius,h=4,$fn=32,center=true);
 
 			// Pegs on "sd card" end
 			translate([-bb_width/2+peg_sd_side,bb_height/2-peg_sd_front,-5])
-				cylinder(r=2.5,h=4,$fn=32,center=true);
+				cylinder(r=peg_outer_radius,h=4,$fn=32,center=true);
 			translate([bb_width/2-peg_sd_side,bb_height/2-peg_sd_front,-5])
-				cylinder(r=2.5,h=4,$fn=32,center=true);
+				cylinder(r=peg_outer_radius,h=4,$fn=32,center=true);
 		}
 	}
 
@@ -79,14 +82,14 @@ difference() {
 	translate([0,0,-bb_depth/2+9]) {
 		// Pegs on "power" end
 		translate([-bb_width/2+peg_pow_side,-bb_height/2+peg_pow_front,-5])
-			cylinder(r=1.5,h=10,$fn=32,center=true);
+			cylinder(r=peg_inner_radius,h=10,$fn=32,center=true);
 		translate([bb_width/2-peg_pow_side,-bb_height/2+peg_pow_front,-5])
-			cylinder(r=1.5,h=10,$fn=32,center=true);
+			cylinder(r=peg_inner_radius,h=10,$fn=32,center=true);
 
 		// Pegs on "sd card" end
 		translate([-bb_width/2+peg_sd_side,bb_height/2-peg_sd_front,-5])
-			cylinder(r=1.5,h=10,$fn=32,center=true);
+			cylinder(r=peg_inner_radius,h=10,$fn=32,center=true);
 		translate([bb_width/2-peg_sd_side,bb_height/2-peg_sd_front,-5])
-			cylinder(r=1.5,h=10,$fn=32,center=true);
+			cylinder(r=peg_inner_radius,h=10,$fn=32,center=true);
 	}
 }
