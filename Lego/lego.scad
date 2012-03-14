@@ -1,83 +1,154 @@
 // edited 2/24/11 3:29 PM
 
-knob_diameter=4.8;		//knobs on top of blocks
-knob_height=2;
-knob_spacing=8.0;
-wall_thickness=1.45;
-roof_thickness=1.05;
+// Standard lego block height, from bottom to top, not counting the circular knobs on top
 block_height=9.5;
-pin_diameter=3;		//pin for bottom blocks with width or length of 1
-post_diameter=6.5;
-reinforcing_width=1.5;
+block_smooth=0.8;
+
+// Exterior thickness
+wall_thickness=1.40; //1.45
+roof_thickness=1.05;
+
+// Knobs are the circles on top of blocks
+knob_diameter=4.9; //4.8
+knob_height=1.8;
+knob_spacing=8.15; //8.0
+
+// Pins are small cylinders inside blocks with width or length of 1 (visible from the bottom)
+pin_diameter=3;
+
+// Posts are the tubes inside blocks with width and length > 1 (visible from the bottom)
+post_diameter=6.46; //6.46
+post_fudge=0.2; // 0.05 Additional diameter for cylinder that makes the post hollow
+
+// Width of reinforcement bars (visible from the bottom)
+reinforcing_width=1.25;
+
+// Axles are cross-shaped holes taken out of lego blocks
 axle_spline_width=2.0;
 axle_diameter=5;
-cylinder_precision=0.5;
 
-module block(width,length,height,axle_hole,reinforcement) {
-	overall_length=(length-1)*knob_spacing+knob_diameter+wall_thickness*2;
-	overall_width=(width-1)*knob_spacing+knob_diameter+wall_thickness*2;
-	union() {
-		difference() {
-			union() {
-				cube([overall_length,overall_width,height*block_height]);
-				translate([knob_diameter/2+wall_thickness,knob_diameter/2+wall_thickness,0]) 
-					for (ycount=[0:width-1])
-						for (xcount=[0:length-1]) {
-							translate([xcount*knob_spacing,ycount*knob_spacing,0])
-								cylinder(r=knob_diameter/2,h=block_height*height+knob_height,$fs=cylinder_precision);
-					}
-			}
-			translate([wall_thickness,wall_thickness,0]) cube([overall_length-wall_thickness*2,overall_width-wall_thickness*2,block_height*height-roof_thickness]);
-			if (axle_hole==true)
-				if (width>1 && length>1) for (ycount=[0:width-1])
-					for (xcount=[0:length-1])
-						translate([xcount*knob_spacing,ycount*knob_spacing,0])  axle(height);
-		}
+// Cylinder precision affects both posts and pins
+cylinder_precision=0.3;
 
-		if (reinforcement==true && width>1 && length>1)
-			difference() {
-				for (ycount=[1:width-1])
-					for (xcount=[1:length-1])
-						translate([xcount*knob_spacing,ycount*knob_spacing,0]) reinforcement(height);
-				for (ycount=[1:width-1])
-					for (xcount=[1:length-1])
-						translate([xcount*knob_spacing,ycount*knob_spacing,0]) cylinder(r=knob_diameter/2, h=height*block_height, $fs=cylinder_precision);
-			}
-
-		if (width>1 && length>1) for (ycount=[1:width-1])
-			for (xcount=[1:length-1])
-				translate([xcount*knob_spacing,ycount*knob_spacing,0]) post(height);
-
-		if (width==1 && length!=1)
-			for (xcount=[1:length-1])
-				translate([xcount*knob_spacing,overall_width/2,0]) cylinder(r=pin_diameter/2,h=block_height*height,$fs=cylinder_precision);
-
-		if (length==1 && width!=1)
-			for (ycount=[1:width-1])
-				translate([overall_length/2,ycount*knob_spacing,0]) cylinder(r=pin_diameter/2,h=block_height*height,$fs=cylinder_precision);
-	}
+// The "reinforcement" is the inner wall that goes from post to post, or post to outer wall
+module reinforcement(overall_width,height) {
+	translate([0,0,height*block_height/2])
+		cube([reinforcing_width,overall_width,height*block_height],center=true);
 }
 
-module post(height) {
-	difference() {
-		cylinder(r=post_diameter/2, h=height*block_height,$fs=cylinder_precision);
-		cylinder(r=knob_diameter/2, h=height*block_height,$fs=cylinder_precision);
-	}
-}
-
-module reinforcement(height) {
-	union() {
-		translate([0,0,height*block_height/2]) union() {
-			cube([reinforcing_width,knob_spacing+knob_diameter+wall_thickness/2,height*block_height],center=true);
-			rotate(v=[0,0,1],a=90) cube([reinforcing_width,knob_spacing+knob_diameter+wall_thickness/2,height*block_height], center=true);
-		}
-	}
-}
-
+// An "axle" is an optional cross-shaped hole that cuts through the lego block
 module axle(height) {
 	translate([0,0,height*block_height/2]) union() {
 		cube([axle_diameter,axle_spline_width,height*block_height],center=true);
 		cube([axle_spline_width,axle_diameter,height*block_height],center=true);
 	}
 }
-			
+
+module lego_knobs(width, length, centerx=0, centery=0, centerz=0) {
+	overall_length=(length-1)*knob_spacing+knob_diameter+wall_thickness*2;
+	overall_width=(width-1)*knob_spacing+knob_diameter+wall_thickness*2;
+	translate([-overall_length/2*centerx, -overall_width/2*centery, -(block_height+knob_height)/2]) {
+		translate([knob_diameter/2+wall_thickness,knob_diameter/2+wall_thickness,0]) {
+			for (ycount=[0:width-1]) {
+				for (xcount=[0:length-1]) {
+					translate([xcount*knob_spacing,ycount*knob_spacing,0])
+						cylinder(r=knob_diameter/2,h=knob_height,$fs=cylinder_precision);
+				}
+			}
+		}
+	}	
+}
+
+// The 'positive space' of a lego block
+module lego_positive(width, length, height, reinforcement=true, centerx=0, centery=0, centerz=0) {
+	overall_length=(length-1)*knob_spacing+knob_diameter+wall_thickness*2;
+	overall_width=(width-1)*knob_spacing+knob_diameter+wall_thickness*2;
+	translate([-overall_length/2*centerx, -overall_width/2*centery, -(block_height+knob_height)/2]) {
+		union() {
+			cube([overall_length,overall_width,height*block_height]);
+			// minkowski() {
+			// 	translate([block_smooth, block_smooth, block_smooth])
+			// 		cube([overall_length-block_smooth*2,overall_width-block_smooth*2,height*block_height-block_smooth*2]);
+			// 	sphere(r=block_smooth, $fn=16);
+			// }
+			translate([knob_diameter/2+wall_thickness,knob_diameter/2+wall_thickness,0]) {
+				for (ycount=[0:width-1]) {
+					for (xcount=[0:length-1]) {
+						translate([xcount*knob_spacing,ycount*knob_spacing,block_height*height])
+							cylinder(r=knob_diameter/2,h=knob_height,$fs=cylinder_precision);
+					}
+				}
+			}
+		}
+	}
+}
+
+// The 'negative space' of a lego block
+module lego_negative(width, length, height, axle_hole=false, reinforcement=true, centerx=0, centery=0, centerz=0) {
+	overall_length=(length-1)*knob_spacing+knob_diameter+wall_thickness*2;
+	overall_width=(width-1)*knob_spacing+knob_diameter+wall_thickness*2;
+	translate([-overall_length/2*centerx, -overall_width/2*centery, -(block_height+knob_height)/2]) {
+		union() {
+			if (axle_hole==true && width>1 && length>1)
+				for (ycount=[0:width-1])
+					for (xcount=[0:length-1])
+						translate([xcount*knob_spacing,ycount*knob_spacing,0])
+							axle(height);
+			difference() {
+				// Hollow out the block by creating an inner block up to the walls and roof of the brick
+				translate([wall_thickness,wall_thickness,0])
+					cube([overall_length-wall_thickness*2,overall_width-wall_thickness*2,block_height*height-roof_thickness]);
+				if (reinforcement==true && width>1 && length>1) {
+					translate([0,0,0]) {
+						for (ycount=[0:width-2]) {
+							for (xcount=[0:length-2]) {
+								translate([xcount*knob_spacing+((knob_spacing+knob_diameter)/2+wall_thickness), ycount*knob_spacing+((knob_spacing+knob_diameter)/2+wall_thickness), 0]) {
+									rotate([0,0,0])
+										reinforcement(overall_length, height);
+									rotate([0,0,90])
+										reinforcement(overall_width, height);
+								}
+							}
+							// translate([overall_width/2, ycount*knob_spacing+((knob_spacing+knob_diameter)/2+wall_thickness), 0])
+						}
+					}
+				}
+				// Remove center cylinder for post
+				if (width>1 && length>1)
+					for (ycount=[0:width-2])
+						for (xcount=[0:length-2])
+							translate([
+								xcount*knob_spacing+((knob_spacing+knob_diameter)/2+wall_thickness),
+								ycount*knob_spacing+((knob_spacing+knob_diameter)/2+wall_thickness),0])
+								cylinder(r=post_diameter/2, h=height*block_height,$fs=cylinder_precision);
+				if (width==1 && length!=1)
+					for (xcount=[0:length-2])
+						translate([xcount*knob_spacing+((knob_spacing+knob_diameter)/2+wall_thickness),overall_width/2,0])
+							cylinder(r=pin_diameter/2,h=block_height*height,$fs=cylinder_precision);
+				if (length==1 && width!=1)
+					for (ycount=[0:width-2])
+						translate([overall_length/2,ycount*knob_spacing+((knob_spacing+knob_diameter)/2+wall_thickness),0])
+							cylinder(r=pin_diameter/2,h=block_height*height,$fs=cylinder_precision);
+			}
+
+			// Add inner cylinder for post back
+			if (width>1 && length>1)
+				for (ycount=[0:width-2])
+					for (xcount=[0:length-2])
+						translate([
+							xcount*knob_spacing+((knob_spacing+knob_diameter)/2+wall_thickness),
+							ycount*knob_spacing+((knob_spacing+knob_diameter)/2+wall_thickness),0])
+							cylinder(r=knob_diameter/2+post_fudge, h=height*block_height-roof_thickness,$fs=cylinder_precision);
+		}
+	}
+}
+
+module lego(width, length, height, axle_hole=false, reinforcement=true, centerx=0, centery=0, centerz=0) {
+	difference() {
+		lego_positive(width, length, height, reinforcement, centerx, centery, centerz);
+		lego_negative(width, length, height, axle_hole, reinforcement, centerx, centery, centerz);
+	}
+}
+
+scale([2.0,2.0,2.0])
+	lego(2,2,1/3);

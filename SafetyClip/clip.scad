@@ -15,7 +15,7 @@ module clip(length, faces) {
         translate([-length/2,5,0]) {
             linear_extrude(height=9,center=true) {
                 polygon(
-                    points=[[-4.5,-5],[4.5,-5],[3.0,5],[-3.0,5]],
+                    points=[[-4.5,-5],[4.5,-5],[2.9,5],[-2.9,5]],
                     paths=[[0,1,2,3]]
                 );
             }
@@ -24,7 +24,7 @@ module clip(length, faces) {
         translate([length/2,5,0]) {
             linear_extrude(height=9,center=true) {
                 polygon(
-                    points=[[-4.5,-5],[4.5,-5],[3.2,5],[-3.2,5]],
+                    points=[[-4.5,-5],[4.5,-5],[3.1,5],[-3.1,5]],
                     paths=[[0,1,2,3]]
                 );
             }
