@@ -54,7 +54,7 @@ difference() {
 				// -- Top End --
 
 				// SD Card slot
-				translate([-6,bb_height/2,-5.5])
+				translate([-6.5,bb_height/2,-5.5])
 					cube([12,10,2], center=true);
 				// USB port
 				translate([10.5,bb_height/2,1.5])
