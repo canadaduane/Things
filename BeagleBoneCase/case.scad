@@ -54,10 +54,10 @@ difference() {
 				// -- Top End --
 
 				// SD Card slot
-				translate([-6,bb_height/2,-4])
+				translate([-6,bb_height/2,-5.5])
 					cube([12,10,2], center=true);
 				// USB port
-				translate([10.5,bb_height/2,3])
+				translate([10.5,bb_height/2,1.5])
 					cube([15,10,8],center=true);
 			}
 		}
@@ -65,16 +65,16 @@ difference() {
 		// Pegs
 		translate([0,0,-bb_depth/2+9]) {
 			// Pegs on "power" end
-			translate([-bb_width/2+peg_pow_side,-bb_height/2+peg_pow_front,-5])
-				cylinder(r=peg_outer_radius,h=4,$fn=32,center=true);
-			translate([bb_width/2-peg_pow_side,-bb_height/2+peg_pow_front,-5])
-				cylinder(r=peg_outer_radius,h=4,$fn=32,center=true);
+			translate([-bb_width/2+peg_pow_side,-bb_height/2+peg_pow_front,-6])
+				cylinder(r=peg_outer_radius,h=2,$fn=32,center=true);
+			translate([bb_width/2-peg_pow_side,-bb_height/2+peg_pow_front,-6])
+				cylinder(r=peg_outer_radius,h=2,$fn=32,center=true);
 
 			// Pegs on "sd card" end
-			translate([-bb_width/2+peg_sd_side,bb_height/2-peg_sd_front,-5])
-				cylinder(r=peg_outer_radius,h=4,$fn=32,center=true);
-			translate([bb_width/2-peg_sd_side,bb_height/2-peg_sd_front,-5])
-				cylinder(r=peg_outer_radius,h=4,$fn=32,center=true);
+			translate([-bb_width/2+peg_sd_side,bb_height/2-peg_sd_front,-6])
+				cylinder(r=peg_outer_radius,h=2,$fn=32,center=true);
+			translate([bb_width/2-peg_sd_side,bb_height/2-peg_sd_front,-6])
+				cylinder(r=peg_outer_radius,h=2,$fn=32,center=true);
 		}
 	}
 
