@@ -1,4 +1,5 @@
 *.gcode
 *.g
 *.*~
+Glasses/*
 .DS_Store
